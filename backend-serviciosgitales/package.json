@@ -1,16 +1,22 @@
 {
   "name": "backend-serviciosgitales",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "API Innova Digital — Express + MySQL Clever Cloud",
+  "main": "src/index.js",
+  "type": "module",
   "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js",
+    "migrate": "node scripts/migrate.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": ["innova-digital", "express", "mysql"],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
   "dependencies": {
-    "express": "^5.2.1"
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^5.2.1",
+    "mysql2": "^3.14.0"
   }
 }
