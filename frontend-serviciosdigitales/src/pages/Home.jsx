@@ -25,6 +25,7 @@ import {
   VALORES_TEXTO,
   VISION,
 } from '../data/brand'
+import { api } from '../lib/api'
 
 const icons = {
   Share2,
@@ -45,6 +46,9 @@ const ENCUESTA_OPTS = [
 export default function Home() {
   const [opt, setOpt] = useState(ENCUESTA_OPTS[0])
   const [enviado, setEnviado] = useState(false)
+  const [contacto, setContacto] = useState({ nombre: '', correo: '', mensaje: '' })
+  const [contactoMsg, setContactoMsg] = useState('')
+  const [contactoErr, setContactoErr] = useState('')
 
   return (
     <>
@@ -383,12 +387,25 @@ export default function Home() {
           </div>
           <form
             className="space-y-4 rounded-[18px] border border-border bg-white p-6 shadow-card"
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={async (e) => {
+              e.preventDefault()
+              setContactoMsg('')
+              setContactoErr('')
+              try {
+                const res = await api.contacto(contacto)
+                setContactoMsg(res.message || 'Mensaje enviado')
+                setContacto({ nombre: '', correo: '', mensaje: '' })
+              } catch (err) {
+                setContactoErr(err.message)
+              }
+            }}
           >
             <label className="block text-sm font-medium">
               Nombre
               <input
                 required
+                value={contacto.nombre}
+                onChange={(e) => setContacto({ ...contacto, nombre: e.target.value })}
                 className="mt-1 w-full rounded-xl border border-border px-4 py-2.5 text-sm outline-none focus:border-blue"
                 placeholder="Tu nombre"
               />
@@ -398,6 +415,8 @@ export default function Home() {
               <input
                 type="email"
                 required
+                value={contacto.correo}
+                onChange={(e) => setContacto({ ...contacto, correo: e.target.value })}
                 className="mt-1 w-full rounded-xl border border-border px-4 py-2.5 text-sm outline-none focus:border-blue"
                 placeholder="tu@correo.com"
               />
@@ -407,10 +426,14 @@ export default function Home() {
               <textarea
                 required
                 rows={4}
+                value={contacto.mensaje}
+                onChange={(e) => setContacto({ ...contacto, mensaje: e.target.value })}
                 className="mt-1 w-full rounded-xl border border-border px-4 py-2.5 text-sm outline-none focus:border-blue"
                 placeholder="Cuéntanos qué necesitas"
               />
             </label>
+            {contactoMsg && <p className="text-sm text-green">{contactoMsg}</p>}
+            {contactoErr && <p className="text-sm text-red-600">{contactoErr}</p>}
             <button
               type="submit"
               className="w-full rounded-xl bg-blue py-3 text-sm font-semibold text-white"

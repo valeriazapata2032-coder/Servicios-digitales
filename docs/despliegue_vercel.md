@@ -2,8 +2,6 @@
 
 ## Recomendación: 2 proyectos en Vercel
 
-Vercel sirve muy bien el frontend. El backend Express + MySQL también puede ir a Vercel como serverless, o quedarse en otro host. Lo más limpio:
-
 ### 1) Frontend (`frontend-serviciosdigitales`)
 1. Importa el repo en [vercel.com](https://vercel.com)
 2. **Root Directory:** `frontend-serviciosdigitales`
@@ -21,16 +19,35 @@ Vercel sirve muy bien el frontend. El backend Express + MySQL también puede ir 
    - `MYSQL_ADDON_USER`
    - `MYSQL_ADDON_PORT`
    - `MYSQL_ADDON_PASSWORD`
-   - `JWT_SECRET`
+   - `JWT_SECRET` (genera uno seguro)
    - `CORS_ORIGIN` = URL del frontend (ej. `https://innova-digital.vercel.app`)
+   - `MYSQL_SSL=true` (recomendado en Vercel)
 
 > No subas el archivo `.env` a Git. Configura las variables solo en el panel de Vercel.
+
+## Base de datos (Clever Cloud)
+
+Si tu red local bloquea el puerto **3306** (común en colegios/universidades):
+
+1. Abre el add-on MySQL en Clever Cloud → **phpMyAdmin** o consola SQL
+2. Pega y ejecuta el contenido de `backend-serviciosgitales/sql/schema_pmv.sql`
+3. Desde una red que permita 3306 (o desde un job en Vercel) ejecuta:
+   ```bash
+   cd backend-serviciosgitales
+   npm run seed
+   ```
+
+Cuentas demo tras el seed:
+- `admin@innovadigital.co` / `Admin1234`
+- `vendedor@innovadigital.co` / `Vendedor123`
+- `cliente@innovadigital.co` / `Cliente123`
 
 ## Local
 ```bash
 # Terminal 1 — API
 cd backend-serviciosgitales
-npm run migrate   # una vez
+npm run migrate   # si el puerto 3306 está abierto
+npm run seed
 npm run dev
 
 # Terminal 2 — PWA

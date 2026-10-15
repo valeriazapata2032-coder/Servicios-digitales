@@ -8,12 +8,12 @@
 |-------------|---------|-------------------------|
 | Landing pública | `6:7992` | `/` — implementada |
 | Catálogo móvil | `6:8455` | `/servicios` — implementada (responsive) |
-| Detalle de servicio móvil | `6:8560` | pendiente |
-| Carrito y checkout móvil | `6:8636` | pendiente |
-| Diagnóstico inicial móvil | `6:8710` | parcial en `/encuesta` + bloque home |
-| Panel del cliente móvil | `6:8786` | pendiente |
-| Panel del vendedor | `6:8276` | pendiente |
-| Panel del administrador | `6:8891` | pendiente |
+| Detalle de servicio móvil | `6:8560` | `/servicios/:id` — implementada |
+| Carrito y checkout móvil | `6:8636` | `/carrito` — implementada |
+| Diagnóstico inicial móvil | `6:8710` | `/encuesta` + briefing en checkout |
+| Panel del cliente móvil | `6:8786` | `/panel/cliente` — implementada |
+| Panel del vendedor | `6:8276` | `/panel/vendedor` — implementada |
+| Panel del administrador | `6:8891` | `/panel/admin` — implementada |
 
 ## Tokens (Figma)
 

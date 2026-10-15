@@ -14,6 +14,19 @@ PWA para una empresa de servicios digitales que ofrece soluciones tecnológicas 
 - `backend-serviciosgitales` — API REST
 - `docs` — requisitos, ER, arquitectura y guía Vercel
 
+## Rutas principales
+| Ruta | Descripción |
+|------|-------------|
+| `/` | Landing (Figma) |
+| `/servicios` | Catálogo |
+| `/servicios/:id` | Detalle + paquetes |
+| `/carrito` | Checkout + diagnóstico |
+| `/encuesta` | Encuesta pública |
+| `/login` · `/registro` | Auth JWT |
+| `/panel/cliente` | Pedidos del cliente |
+| `/panel/vendedor` | Servicios y pedidos |
+| `/panel/admin` | Métricas y aprobaciones |
+
 ## Arranque rápido
 
 ### Frontend
@@ -29,6 +42,7 @@ cd backend-serviciosgitales
 npm install
 cp .env.example .env   # completar credenciales Clever Cloud
 npm run migrate        # crea tablas PMV
+npm run seed           # datos demo
 npm run dev
 ```
 

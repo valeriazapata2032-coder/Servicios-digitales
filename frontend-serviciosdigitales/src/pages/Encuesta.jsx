@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { api } from '../lib/api'
 
 const PREGUNTAS = [
   {
@@ -30,6 +31,8 @@ export default function Encuesta() {
   const [correo, setCorreo] = useState('')
   const [consentimiento, setConsentimiento] = useState(false)
   const [enviado, setEnviado] = useState(false)
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const pregunta = PREGUNTAS[paso]
   const total = PREGUNTAS.length
@@ -42,19 +45,32 @@ export default function Encuesta() {
     if (paso < total - 1) setPaso((p) => p + 1)
   }
 
-  function enviar(e) {
+  async function enviar(e) {
     e.preventDefault()
     if (!consentimiento) return
-    setEnviado(true)
+    setError('')
+    setLoading(true)
+    try {
+      await api.enviarEncuesta(1, {
+        correo: correo || null,
+        consentimiento: true,
+        respuestas,
+      })
+      setEnviado(true)
+    } catch (err) {
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (enviado) {
     return (
       <div className="mx-auto max-w-lg px-4 py-20 text-center sm:px-6">
-        <p className="font-display text-3xl font-bold text-brand-700">¡Gracias!</p>
+        <p className="text-3xl font-bold text-navy">¡Gracias!</p>
         <p className="mt-3 text-muted">
-          Tu respuesta nos ayuda a mejorar la oferta de Innova Digital para
-          emprendimientos y empresas.
+          Tu respuesta nos ayuda a mejorar la oferta de Innova Digital para emprendimientos y
+          empresas.
         </p>
       </div>
     )
@@ -62,19 +78,19 @@ export default function Encuesta() {
 
   return (
     <div className="mx-auto max-w-xl px-4 py-14 sm:px-6">
-      <p className="text-sm font-semibold uppercase tracking-wider text-accent-600">
+      <p className="text-sm font-semibold uppercase tracking-wider text-green">
         Investigación de mercado
       </p>
-      <h1 className="mt-2 font-display text-4xl font-bold text-ink">
+      <h1 className="mt-2 text-3xl font-bold text-ink sm:text-4xl">
         Encuesta de servicios digitales
       </h1>
       <p className="mt-3 text-muted">
         No necesitas cuenta. Tus datos se tratan según la Ley 1581 de 2012.
       </p>
 
-      <div className="mt-8 h-1.5 overflow-hidden rounded-full bg-brand-100">
+      <div className="mt-8 h-1.5 overflow-hidden rounded-full bg-soft">
         <div
-          className="h-full rounded-full bg-accent-500 transition-all duration-300"
+          className="h-full rounded-full bg-green-bright transition-all duration-300"
           style={{ width: `${((paso + 1) / total) * 100}%` }}
         />
       </div>
@@ -84,9 +100,7 @@ export default function Encuesta() {
 
       <form onSubmit={enviar} className="mt-8 space-y-6">
         <fieldset>
-          <legend className="font-display text-xl font-bold text-ink">
-            {pregunta.enunciado}
-          </legend>
+          <legend className="text-xl font-bold text-ink">{pregunta.enunciado}</legend>
           <div className="mt-4 space-y-2">
             {pregunta.opciones.map((op) => {
               const activa = respuestas[pregunta.id] === op
@@ -97,8 +111,8 @@ export default function Encuesta() {
                   onClick={() => seleccionar(op)}
                   className={`block w-full rounded-xl border px-4 py-3 text-left text-sm font-medium transition ${
                     activa
-                      ? 'border-accent-500 bg-accent-50 text-brand-800'
-                      : 'border-brand-100 bg-white text-ink hover:border-brand-300'
+                      ? 'border-blue bg-soft text-navy'
+                      : 'border-border bg-white text-ink hover:border-blue/40'
                   }`}
                 >
                   {op}
@@ -113,19 +127,19 @@ export default function Encuesta() {
             type="button"
             disabled={!respuestas[pregunta.id]}
             onClick={siguiente}
-            className="w-full rounded-xl bg-brand-600 py-3 text-sm font-semibold text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-40"
+            className="w-full rounded-xl bg-blue py-3 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-40"
           >
             Siguiente
           </button>
         ) : (
-          <div className="space-y-4 border-t border-brand-100 pt-6">
+          <div className="space-y-4 border-t border-border pt-6">
             <label className="block text-sm font-medium text-ink">
               Correo (opcional)
               <input
                 type="email"
                 value={correo}
                 onChange={(e) => setCorreo(e.target.value)}
-                className="mt-1 w-full rounded-xl border border-brand-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-200"
+                className="mt-1 w-full rounded-xl border border-border bg-white px-4 py-2.5 text-sm outline-none focus:border-blue"
                 placeholder="tu@correo.com"
               />
             </label>
@@ -134,18 +148,18 @@ export default function Encuesta() {
                 type="checkbox"
                 checked={consentimiento}
                 onChange={(e) => setConsentimiento(e.target.checked)}
-                className="mt-1 accent-brand-600"
+                className="mt-1 accent-blue"
                 required
               />
-              Autorizo el tratamiento de mis datos personales conforme a la Ley 1581 de
-              2012.
+              Autorizo el tratamiento de mis datos personales conforme a la Ley 1581 de 2012.
             </label>
+            {error && <p className="text-sm text-red-600">{error}</p>}
             <button
               type="submit"
-              disabled={!respuestas[pregunta.id] || !consentimiento}
-              className="w-full rounded-xl bg-accent-500 py-3 text-sm font-semibold text-brand-900 transition hover:bg-accent-400 disabled:cursor-not-allowed disabled:opacity-40"
+              disabled={!respuestas[pregunta.id] || !consentimiento || loading}
+              className="w-full rounded-xl bg-green py-3 text-sm font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-40"
             >
-              Enviar respuestas
+              {loading ? 'Enviando…' : 'Enviar respuestas'}
             </button>
           </div>
         )}

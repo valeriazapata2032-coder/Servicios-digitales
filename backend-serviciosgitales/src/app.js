@@ -2,6 +2,12 @@ import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import { pool } from './config/db.js'
+import authRoutes from './routes/auth.js'
+import serviciosRoutes from './routes/servicios.js'
+import pedidosRoutes from './routes/pedidos.js'
+import encuestasRoutes from './routes/encuestas.js'
+import adminRoutes from './routes/admin.js'
+import contactoRoutes from './routes/contacto.js'
 
 dotenv.config()
 
@@ -42,8 +48,17 @@ app.get('/api/health', async (_req, res) => {
 app.get('/api', (_req, res) => {
   res.json({
     name: 'Innova Digital API',
-    version: '0.1.0',
-    endpoints: ['/api/health', '/api/categorias', '/api/servicios', '/api/auth'],
+    version: '1.0.0',
+    endpoints: [
+      '/api/health',
+      '/api/auth',
+      '/api/categorias',
+      '/api/servicios',
+      '/api/pedidos',
+      '/api/encuestas',
+      '/api/admin',
+      '/api/contacto',
+    ],
   })
 })
 
@@ -56,6 +71,18 @@ app.get('/api/categorias', async (_req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Error al listar categorías', detail: error.message })
   }
+})
+
+app.use('/api/auth', authRoutes)
+app.use('/api/servicios', serviciosRoutes)
+app.use('/api/pedidos', pedidosRoutes)
+app.use('/api/encuestas', encuestasRoutes)
+app.use('/api/admin', adminRoutes)
+app.use('/api/contacto', contactoRoutes)
+
+app.use((err, _req, res, _next) => {
+  console.error(err)
+  res.status(500).json({ message: err.message || 'Error interno' })
 })
 
 export default app
